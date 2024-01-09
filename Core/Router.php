@@ -63,7 +63,6 @@ class Router
                 return require base_path('Http/controllers/' . $route['controller']);
             }
         }
-
         $this->abort();
     }
 
