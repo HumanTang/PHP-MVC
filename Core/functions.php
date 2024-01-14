@@ -56,3 +56,8 @@ function old($key, $default = '')
 {
     return Core\Session::get('old')[$key] ?? $default;
 }
+
+function root_url($path)
+{
+    return $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $path;
+}

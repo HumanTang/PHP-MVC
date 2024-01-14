@@ -1,5 +1,5 @@
 <?php
-
+// Show a Single Quiz information
 use Core\App;
 use Core\Database;
 

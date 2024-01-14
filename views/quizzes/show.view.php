@@ -10,14 +10,141 @@
 
         <p><?= htmlspecialchars($quiz['QuizTitle']) ?></p>
 
-        <p class="mb-6">
-            <a href="/questions?id=<?= $quiz['QuizID']?>" class="text-blue-500 underline">View Questions</a>
-        </p>
-
         <footer class="mt-6">
             <a href="/quiz/edit?id=<?= $quiz['QuizID'] ?>" class="inline-flex justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Edit</a>
         </footer>
+
+        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Option</button>
+        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Question</button>
+
+        <div class="sm:col-span-4">
+            <label for="username" class="block text-sm font-medium leading-6 text-gray-900">New Answer</label>
+            <div class="mt-2">
+                <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <textarea name="answer" id="newanswer" rows="3" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="New Answer Text..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!--
+          This example requires some changes to your config:
+
+          ```
+          // tailwind.config.js
+          module.exports = {
+            // ...
+            plugins: [
+              // ...
+              require('@tailwindcss/forms'),
+            ],
+          }
+          ```
+        -->
+        <form id="myForm">
+            <div class="space-y-12">
+
+                <div class="border-b border-gray-900/10 pb-12">
+                    <div class="mt-10 space-y-10">
+                        <!-- Container for dynamic elements -->
+                        <div id="dynamicElementsContainer"></div>
+                        <input type="button" value="Add Element" onclick="addInputElement()">
+                        <button type="button" id="addElementBtn">Add Element Ajax</button>
+                        <fieldset>
+                            <legend class="text-sm font-semibold leading-6 text-gray-900">Answers</legend>
+                            <div class="mt-6 space-y-6" id="answers">
+                                <!-- loop answers-->
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+                <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+            </div>
+        </form>
+
+
     </div>
 </main>
+<!-- JavaScript to append elements on the client side -->
+<script>
+    function addInputElement() {
+        var container = document.getElementById('dynamicElementsContainer');
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'dynamic_element[]'; // Use an array if you expect multiple dynamic elements
+        container.appendChild(input);
+    }
+</script>
 
+<script>
+    $(document).ready(function () {
+        const form = $('#myForm')
+        form.submit(function(event) {
+            event.preventDefault();
+            console.log("submitted");
+            submitQuiz();
+        });
+
+
+
+        // Click event for the "Add Element" button
+        $('#addElementBtn').on('click', function () {
+            // AJAX request to form.php
+            var value = $("#newanswer").val().trim();
+            $.ajax({
+                url: 'http://127.0.0.1:8080/checkbox',
+                type: 'POST',
+                data: {answer: value},
+                dataType: 'html',
+                success: function (response) {
+                    // Append the received HTML to the form
+                    $('#dynamicElementsContainer').append(response);
+                },
+                error: function () {
+                    console.log('Error in AJAX request');
+                }
+            });
+        });
+
+        function submitQuiz() {
+            const formData = $('#myForm').serializeArray();
+            console.log('FormData:', formData);
+            $.ajax({
+                url: 'http://127.0.0.1:8080/form',
+                type: 'post',
+                data: formData,
+                // dataType: 'json',
+                success: function(response) {
+                    // Save user answers to cookies
+                    console.log('response', response)
+                    $('#dynamicElementsContainer').append(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error submitting quiz:', status, error);
+                }
+            });
+        }
+
+        function getAnswers() {
+            $.ajax({
+                url: 'http://127.0.0.1:8080/getAnswers',
+                type: 'post',
+                // dataType: 'json',
+                success: function(response) {
+                    // Save user answers to cookies
+                    console.log('response', response)
+                    $('#answers').append(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error getAnswers:', status, error);
+                }
+            });
+        }
+
+        getAnswers();
+    });
+</script>
 <?php require base_path('views/partials/footer.php') ?>

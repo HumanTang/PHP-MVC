@@ -1,6 +1,7 @@
 <?php
 
 $router->get('/', 'index.php');
+$router->get('/info', 'info.php');
 $router->get('/about', 'about.php');
 $router->get('/contact', 'contact.php');
 
@@ -38,4 +39,7 @@ $router->post('/register', 'registration/store.php')->only('guest');
 $router->get('/login', 'session/create.php')->only('guest');
 $router->post('/session', 'session/store.php')->only('guest');
 $router->delete('/session', 'session/destroy.php')->only('auth');
-
+//Ajax Call
+$router->post('/form', 'ajax/form.php');
+$router->post('/checkbox', 'ajax/components/checkbox.php');
+$router->post('/getAnswers', 'ajax/functions/post/answers.php');

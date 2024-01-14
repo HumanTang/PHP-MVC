@@ -1,3 +1,6 @@
+CREATE DATABASE quiz;
+
+START TRANSACTION;
 -- Table for User Information
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
@@ -8,9 +11,9 @@ CREATE TABLE Users (
 
 -- Table for Quizzes
 CREATE TABLE Quizzes (
-     QuizID INT AUTO_INCREMENT PRIMARY KEY,
-     UserID INT, -- Foreign key referencing Users table
-     QuizTitle VARCHAR(100) NOT NULL
+    QuizID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT, -- Foreign key referencing Users table
+    QuizTitle VARCHAR(100) NOT NULL
 );
 
 -- Table for Questions
@@ -28,30 +31,32 @@ CREATE TABLE QuizQuestions (
 
 -- Table for Answers
 CREATE TABLE Answers (
-     AnswerID INT AUTO_INCREMENT PRIMARY KEY,
-     QuestionID INT, -- Foreign key referencing Questions table
-     AnswerText VARCHAR(255) NOT NULL,
-     IsCorrect BOOLEAN NOT NULL
+    AnswerID INT AUTO_INCREMENT PRIMARY KEY,
+    QuestionID INT, -- Foreign key referencing Questions table
+    AnswerText VARCHAR(255) NOT NULL,
+    IsCorrect BOOLEAN NOT NULL
 );
 
 
 
 ALTER TABLE quizzes
     ADD CONSTRAINT quiz_userid
-        FOREIGN KEY (user_id)
-            REFERENCES users(user_id);
+        FOREIGN KEY (userid)
+            REFERENCES users(userid);
 
-ALTER TABLE quiz_question
+ALTER TABLE quizquestions
     ADD CONSTRAINT quiz_question
-        FOREIGN KEY (question_id)
-            REFERENCES questions(question_id);
+        FOREIGN KEY (questionid)
+            REFERENCES questions(questionid);
 
-ALTER TABLE quiz_question
+
+ALTER TABLE quizquestions
     ADD CONSTRAINT quiz_quiz
-        FOREIGN KEY (quiz_id)
-            REFERENCES quizzes(quiz_id);
+        FOREIGN KEY (quizid)
+            REFERENCES quizzes(quizid);
 
 ALTER TABLE answers
     ADD CONSTRAINT answer_question
-        FOREIGN KEY (question_id)
-            REFERENCES questions(question_id) ;
+        FOREIGN KEY (questionid)
+            REFERENCES questions(questionid) ;
+COMMIT;

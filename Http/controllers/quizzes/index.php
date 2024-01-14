@@ -1,5 +1,5 @@
 <?php
-
+// Show Quizzes List
 use Core\App;
 use Core\Database;
 
