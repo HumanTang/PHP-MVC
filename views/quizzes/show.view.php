@@ -14,17 +14,14 @@
             <a href="/quiz/edit?id=<?= $quiz['QuizID'] ?>" class="inline-flex justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Edit</a>
         </footer>
 
-        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Option</button>
-        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Question</button>
-
-        <div class="sm:col-span-4">
-            <label for="username" class="block text-sm font-medium leading-6 text-gray-900">New Answer</label>
-            <div class="mt-2">
-                <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                    <textarea name="answer" id="newanswer" rows="3" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="New Answer Text..."></textarea>
-                </div>
-            </div>
+        <div>
+            <button type="button" id="addQuestionBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add Question</button>
         </div>
+
+
+
+
+
 
         <!--
           This example requires some changes to your config:
@@ -41,17 +38,24 @@
           ```
         -->
         <form id="myForm">
+            <input type="hidden" name="QuizID" value="<?= $quiz['QuizID'] ?>">
+
             <div class="space-y-12">
 
                 <div class="border-b border-gray-900/10 pb-12">
                     <div class="mt-10 space-y-10">
                         <!-- Container for dynamic elements -->
-                        <div id="dynamicElementsContainer"></div>
-                        <input type="button" value="Add Element" onclick="addInputElement()">
-                        <button type="button" id="addElementBtn">Add Element Ajax</button>
+                        <div id="dynamicElementsContainer">
+
+                        </div>
+
+                        <div id="newQuestion-container">
+
+                        </div>
+
                         <fieldset>
-                            <legend class="text-sm font-semibold leading-6 text-gray-900">Answers</legend>
-                            <div class="mt-6 space-y-6" id="answers">
+
+                            <div class="mt-6 space-y-6" id="answers-container">
                                 <!-- loop answers-->
                             </div>
                         </fieldset>
@@ -80,6 +84,30 @@
 </script>
 
 <script>
+    function log(text){
+        console.log(text);
+    }
+
+    function addAnswerBtn(index) {
+        console.log("addAnswerBtn");
+        console.log(index);
+        var ansIndex = $(".answers-cards-" + index).length + 1;
+        console.log("ansIndex: " + ansIndex);
+        $.ajax({
+            url: 'http://127.0.0.1:8080/checkbox',
+            type: 'POST',
+            data: {index: index, ansIndex: ansIndex},
+            dataType: 'html',
+            success: function (response) {
+                // Append the received HTML to the form
+                $('#newAnswer-container_' + index).append(response);
+            },
+            error: function () {
+                console.log('Error in AJAX request');
+            }
+        });
+    }
+
     $(document).ready(function () {
         const form = $('#myForm')
         form.submit(function(event) {
@@ -91,17 +119,37 @@
 
 
         // Click event for the "Add Element" button
-        $('#addElementBtn').on('click', function () {
+        $('#addAnswerBtn').on('click', function () {
             // AJAX request to form.php
-            var value = $("#newanswer").val().trim();
+            console.log("addAnswerBtn");
+            var index = $(".answers-cards").length + 1;
+            console.log(index);
             $.ajax({
                 url: 'http://127.0.0.1:8080/checkbox',
                 type: 'POST',
-                data: {answer: value},
+                data: {index: index},
                 dataType: 'html',
                 success: function (response) {
                     // Append the received HTML to the form
                     $('#dynamicElementsContainer').append(response);
+                },
+                error: function () {
+                    console.log('Error in AJAX request');
+                }
+            });
+        });
+
+        $('#addQuestionBtn').on('click', function () {
+            // AJAX request to form.php
+            var index = $(".questions-cards").length + 1;
+            $.ajax({
+                url: 'http://127.0.0.1:8080/textarea',
+                type: 'POST',
+                data: {index: index},
+                dataType: 'html',
+                success: function (response) {
+                    // Append the received HTML to the form
+                    $('#newQuestion-container').append(response);
                 },
                 error: function () {
                     console.log('Error in AJAX request');
@@ -128,15 +176,29 @@
             });
         }
 
+        function getQuestions() {
+            $.ajax({
+                url: 'http://127.0.0.1:8080/getQuestions',
+                type: 'post',
+                // dataType: 'json',
+                success: function(response) {
+                    console.log('response', response)
+                    $('#questions-container').append(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error getQuestions:', status, error);
+                }
+            });
+        }
+
         function getAnswers() {
             $.ajax({
                 url: 'http://127.0.0.1:8080/getAnswers',
                 type: 'post',
                 // dataType: 'json',
                 success: function(response) {
-                    // Save user answers to cookies
                     console.log('response', response)
-                    $('#answers').append(response);
+                    $('#answers-container').append(response);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error getAnswers:', status, error);
@@ -144,7 +206,9 @@
             });
         }
 
-        getAnswers();
+
+
+
     });
 </script>
 <?php require base_path('views/partials/footer.php') ?>

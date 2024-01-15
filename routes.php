@@ -42,4 +42,8 @@ $router->delete('/session', 'session/destroy.php')->only('auth');
 //Ajax Call
 $router->post('/form', 'ajax/form.php');
 $router->post('/checkbox', 'ajax/components/checkbox.php');
+$router->post('/textarea', 'ajax/components/textarea.php');
+$router->post('/createQuestion', 'ajax/components/question_create.php');
+$router->post('/createAnswer', 'ajax/components/answer_create.php');
 $router->post('/getAnswers', 'ajax/functions/post/answers.php');
+$router->post('/getQuestions', 'ajax/functions/post/questions.php');
