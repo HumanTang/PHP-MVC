@@ -20,6 +20,12 @@
 
 
 
+        <div>
+            <button type="button" id="getQuestionBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Load Question</button>
+        </div>
+
+
+
 
 
 
@@ -124,6 +130,13 @@
             submitAnswer();
         });
 
+
+        $('#getQuestionBtn').on('click', function () {
+            getQuestions(<?= $_GET['id'] ?>);
+        });
+
+
+
         function submitAnswer() {
             const formData = $('#myForm').serializeArray();
             console.log('FormData:', formData);
@@ -218,7 +231,7 @@
                 }
             });
         }
-        getQuestions(<?= $_GET['id'] ?>);
+
 
         function getAnswers() {
             $.ajax({
