@@ -53,6 +53,10 @@
 
                         </div>
 
+                        <div id="questions-container">
+
+                        </div>
+
                         <fieldset>
 
                             <div class="mt-6 space-y-6" id="answers-container">
@@ -62,7 +66,7 @@
                     </div>
                 </div>
             </div>
-
+            <button type="button" id="checkAnswerBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Check Answer</button>
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
@@ -116,6 +120,29 @@
             submitQuiz();
         });
 
+        $('#checkAnswerBtn').on('click', function () {
+            submitAnswer();
+        });
+
+        function submitAnswer() {
+            const formData = $('#myForm').serializeArray();
+            console.log('FormData:', formData);
+            $.ajax({
+                url: 'http://127.0.0.1:8080/checkanswer',
+                type: 'post',
+                data: formData,
+                // dataType: 'json',
+                success: function(response) {
+                    // Save user answers to cookies
+                    console.log('response', response)
+                    $('#dynamicElementsContainer').append(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error check answer:', status, error);
+                }
+            });
+        }
+
 
 
         // Click event for the "Add Element" button
@@ -145,7 +172,7 @@
             $.ajax({
                 url: 'http://127.0.0.1:8080/textarea',
                 type: 'POST',
-                data: {index: index},
+                data: {index: index, mode: "edit"},
                 dataType: 'html',
                 success: function (response) {
                     // Append the received HTML to the form
@@ -176,10 +203,11 @@
             });
         }
 
-        function getQuestions() {
+        function getQuestions(quizid) {
             $.ajax({
                 url: 'http://127.0.0.1:8080/getQuestions',
                 type: 'post',
+                data: {id: quizid , mode: "view"},
                 // dataType: 'json',
                 success: function(response) {
                     console.log('response', response)
@@ -190,6 +218,7 @@
                 }
             });
         }
+        getQuestions(<?= $_GET['id'] ?>);
 
         function getAnswers() {
             $.ajax({

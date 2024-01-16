@@ -41,6 +41,7 @@ $router->post('/session', 'session/store.php')->only('guest');
 $router->delete('/session', 'session/destroy.php')->only('auth');
 //Ajax Call
 $router->post('/form', 'ajax/form.php');
+$router->post('/checkanswer', 'ajax/checkanswer.php');
 $router->post('/checkbox', 'ajax/components/checkbox.php');
 $router->post('/textarea', 'ajax/components/textarea.php');
 $router->post('/createQuestion', 'ajax/components/question_create.php');

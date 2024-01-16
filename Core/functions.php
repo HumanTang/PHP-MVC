@@ -46,6 +46,13 @@ function view($path, $attributes = [])
     require base_path('views/' . $path);
 }
 
+function controller($path, $attributes = [])
+{
+    extract($attributes);
+
+    require base_path('controllers/' . $path);
+}
+
 function redirect($path)
 {
     header("location: {$path}");
