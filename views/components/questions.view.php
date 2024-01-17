@@ -22,6 +22,7 @@ $questionIndex = 0;
             endif; ?>
     <?php view("components/quiz/checkbox.view.php", [
             "index" => $questionIndex,
+            "questionID" => $questionData['QuestionID'],
             "answer" => $questionData['AnswerText'],
             "IsCorrect" => $questionData['IsCorrect'],
             "answerIndex" => $answerIndex,
@@ -33,4 +34,25 @@ $questionIndex = 0;
 
 <?php endforeach; ?>
 <?php //= print_r($questionArr) ?>
+<?php
+
+// Display the HTML form
+//echo '<form action="submit_quiz.php" method="post">'; // Change "submit_quiz.php" to the actual submission script
+//    foreach ($quizData as $questionID => $questionData) {
+//    echo '<fieldset>';
+//        echo '<legend>' . $questionData['QuestionText'] . '</legend>';
+//
+//        foreach ($questionData['Answers'] as $answer) {
+//        echo '<label>';
+//            echo '<input type="checkbox" name="answers[' . $questionID . '][]" value="' . $answer['AnswerID'] . '">';
+//            echo $answer['AnswerText'];
+//            echo '</label><br>';
+//        }
+//
+//        echo '</fieldset>';
+//    }
+//
+//    echo '<input type="submit" value="Submit">';
+//    echo '</form>';
+//?>
 

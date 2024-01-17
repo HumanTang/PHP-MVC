@@ -26,6 +26,46 @@ WHERE answers.QuestionID in (SELECT questions.QuestionID
     ])->get();
 
 
+
+
+
+// SQL query to retrieve quiz questions and answers
+
+
+    $result = $db->query('SELECT
+            qq.QuestionID,
+            q.QuestionText,
+            a.AnswerID,
+            a.AnswerText,
+            a.IsCorrect
+          FROM QuizQuestions qq
+          INNER JOIN Questions q ON qq.QuestionID = q.QuestionID
+          LEFT JOIN Answers a ON q.QuestionID = a.QuestionID
+          WHERE qq.QuizID = :quizid
+          ORDER BY qq.QuestionID, a.AnswerID',[
+        'quizid' => 1
+    ]);
+
+
+    while ($row = $result->fetch_assoc()) {
+        $questionID = $row['QuestionID'];
+        $answer = array(
+            'AnswerID' => $row['AnswerID'],
+            'AnswerText' => $row['AnswerText'],
+            'IsCorrect' => $row['IsCorrect']
+        );
+
+        if (!isset($quizData[$questionID])) {
+            $quizData[$questionID] = array(
+                'QuestionText' => $row['QuestionText'],
+                'Answers' => array()
+            );
+        }
+
+        $quizData[$questionID]['Answers'][] = $answer;
+    }
+
+
     $db->commit();
 }catch (PDOException $e) {
     // Roll back the transaction if any step fails
@@ -33,10 +73,13 @@ WHERE answers.QuestionID in (SELECT questions.QuestionID
     dd($e);
 }
 
+
+
+
 view("components/questions.view.php", [
     'heading' => 'My Questions',
-    'questions' => $questions
+    'questions' => $questions,
+    'quizData' => $quizData,
 ]);
-
 
 

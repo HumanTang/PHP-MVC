@@ -24,7 +24,7 @@ if($_POST['mode'] == "edit"){
     echo <<<EOL
     <div class="relative flex gap-x-3">
         <div class="answers-cards flex h-6 items-center">
-            $answerIndex. <input name="questions[question_$index][answers][]" type="checkbox" value="$answerID" $selected class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+            $answerIndex. <input name="questions[$questionID][answers][]" type="checkbox" value="$answerID" $selected class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
         </div>        
         
         <h1>$answer</h1>

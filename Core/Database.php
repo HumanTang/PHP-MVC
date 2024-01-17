@@ -32,9 +32,19 @@ class Database
         return $this->statement->fetchAll();
     }
 
+    public function fetchAll()
+    {
+        return $this->statement->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     public function find()
     {
         return $this->statement->fetch();
+    }
+
+    public function fetch_assoc()
+    {
+        return $this->statement->fetch(PDO::FETCH_ASSOC);
     }
 
     public function findOrFail()

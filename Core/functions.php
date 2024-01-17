@@ -50,7 +50,13 @@ function controller($path, $attributes = [])
 {
     extract($attributes);
 
-    require base_path('controllers/' . $path);
+    require base_path('Http/controllers/' . $path);
+}
+function controller_path($path, $attributes = [])
+{
+    extract($attributes);
+
+    return base_path('Http/controllers/' . $path);
 }
 
 function redirect($path)

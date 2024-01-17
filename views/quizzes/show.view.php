@@ -43,7 +43,7 @@
           }
           ```
         -->
-        <form id="myForm">
+        <form id="myForm" action="<?= root_url("/response") ?>" method="post">
             <input type="hidden" name="QuizID" value="<?= $quiz['QuizID'] ?>">
 
             <div class="space-y-12">
@@ -121,9 +121,9 @@
     $(document).ready(function () {
         const form = $('#myForm')
         form.submit(function(event) {
-            event.preventDefault();
-            console.log("submitted");
-            submitQuiz();
+            // event.preventDefault();
+            // console.log("submitted");
+            // submitQuiz();
         });
 
         $('#checkAnswerBtn').on('click', function () {
@@ -224,7 +224,7 @@
                 // dataType: 'json',
                 success: function(response) {
                     console.log('response', response)
-                    $('#questions-container').append(response);
+                    $('#questions-container').html(response);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error getQuestions:', status, error);

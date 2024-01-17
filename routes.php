@@ -48,3 +48,4 @@ $router->post('/createQuestion', 'ajax/components/question_create.php');
 $router->post('/createAnswer', 'ajax/components/answer_create.php');
 $router->post('/getAnswers', 'ajax/functions/post/answers.php');
 $router->post('/getQuestions', 'ajax/functions/post/questions.php');
+$router->post('/response', 'response.php');
