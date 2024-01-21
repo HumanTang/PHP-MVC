@@ -189,6 +189,7 @@
             const formData = $('#quiz-container').serializeArray();
             var correctAnswerArr = Array();
             for (var j = 0; j < quizData[quizQuestionID[currentQuestionIndex]].Answers.length; j++){
+                if(quizData[quizQuestionID[currentQuestionIndex]].Answers[j].IsCorrect == 1)
                 correctAnswerArr.push(quizData[quizQuestionID[currentQuestionIndex]].Answers[j].AnswerID);
             }
 
@@ -198,6 +199,8 @@
                 if (correctAnswerArr.includes(parseInt(formData[i].value))){
                     console.log(formData[i].value + " isCorrect!");
                     $("#answer_" + formData[i].value).css("color", "green")
+                }else{
+                    $("#answer_" + formData[i].value).css("color", "red")
                 }
             }
         });
