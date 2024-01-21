@@ -25,8 +25,34 @@
         </div>
 
 
+        <div>
+            <button type="button" id="getQuestionJsonBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Load Question Json</button>
+        </div>
 
+        <div>
+            <button type="button" id="quizStartBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Start Quiz</button>
+        </div>
 
+        <div>
+            <button type="button" id="nextQuestionBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Next Question</button>
+        </div>
+
+        <div>
+            <button type="button" id="confirmAnswerBtn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Confirm Answer</button>
+        </div>
+
+        <form id="quiz-container"></form>
+
+        <p>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Button with data-bs-target
+            </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                <pre id="json-area" class="json-container"></pre>
+            </div>
+        </div>
 
 
         <!--
@@ -43,6 +69,8 @@
           }
           ```
         -->
+
+
         <form id="myForm" action="<?= root_url("/response") ?>" method="post">
             <input type="hidden" name="QuizID" value="<?= $quiz['QuizID'] ?>">
 
@@ -125,7 +153,25 @@
             // console.log("submitted");
             // submitQuiz();
         });
+        $('#quizStartBtn').on('click', function () {
+            var quizData = JSON.parse(localStorage.getItem('quizData'));
+            var quizQuestionID = JSON.parse(localStorage.getItem('quizQuestionID'));
+            localStorage.setItem('currentQuestionIndex', 0);
+            var currentQuestionIndex = parseInt(localStorage.getItem('currentQuestionIndex'));
+            console.log(quizData);
+            displayQuestion(quizQuestionID[currentQuestionIndex]);
 
+        });
+        $('#nextQuestionBtn').on('click', function () {
+            var quizQuestionID = JSON.parse(localStorage.getItem('quizQuestionID'));
+            var currentQuestionIndex = parseInt(localStorage.getItem('currentQuestionIndex'));
+            currentQuestionIndex = currentQuestionIndex + 1;
+            localStorage.setItem('currentQuestionIndex', currentQuestionIndex);
+            if(parseInt(localStorage.getItem('currentQuestionIndex')) < quizQuestionID.length){
+                displayQuestion(quizQuestionID[parseInt(localStorage.getItem('currentQuestionIndex'))]);
+            }
+
+        });
         $('#checkAnswerBtn').on('click', function () {
             submitAnswer();
         });
@@ -133,6 +179,31 @@
 
         $('#getQuestionBtn').on('click', function () {
             getQuestions(<?= $_GET['id'] ?>);
+        });
+
+        $('#confirmAnswerBtn').on('click', function () {
+            var quizData = JSON.parse(localStorage.getItem('quizData'));
+            var currentQuestionIndex = parseInt(localStorage.getItem('currentQuestionIndex'));
+            var quizQuestionID = JSON.parse(localStorage.getItem('quizQuestionID'));
+            console.log("currentQuestionIndex = " + currentQuestionIndex)
+            const formData = $('#quiz-container').serializeArray();
+            var correctAnswerArr = Array();
+            for (var j = 0; j < quizData[quizQuestionID[currentQuestionIndex]].Answers.length; j++){
+                correctAnswerArr.push(quizData[quizQuestionID[currentQuestionIndex]].Answers[j].AnswerID);
+            }
+
+            console.log("correctAnswerArr = ",correctAnswerArr);
+
+            for(var i = 0; i < formData.length; i++){
+                if (correctAnswerArr.includes(parseInt(formData[i].value))){
+                    console.log(formData[i].value + " isCorrect!");
+                    $("#answer_" + formData[i].value).css("color", "green")
+                }
+            }
+        });
+
+        $('#getQuestionJsonBtn').on('click', function () {
+            getQuestionsJson(<?= $_GET['id'] ?>);
         });
 
 
@@ -216,6 +287,9 @@
             });
         }
 
+
+
+
         function getQuestions(quizid) {
             $.ajax({
                 url: 'http://127.0.0.1:8080/getQuestions',
@@ -230,6 +304,61 @@
                     console.error('Error getQuestions:', status, error);
                 }
             });
+        }
+
+        function getQuestionsJson(quizid) {
+            $.ajax({
+                url: 'http://127.0.0.1:8080/getQuestionsJson',
+                type: 'post',
+                data: {id: quizid , mode: "json"},
+
+
+                success: function(response) {
+                    console.log('response', response)
+                    $('#json-area').html(prettyPrintJson.toHtml(response));
+                    localStorage.setItem('quizData', JSON.stringify(response.quizData));
+                    localStorage.setItem('quizQuestionID', JSON.stringify(response.quizQuestionID));
+                    //displayQuestion(1);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error getQuestions:', status, error);
+                }
+            });
+        }
+
+
+
+        // Function to display question and answers
+        function displayQuestion(questionID) {
+            var quizData = JSON.parse(localStorage.getItem('quizData'));
+            var questionContainer = document.getElementById('quiz-container');
+            var questionData = quizData[questionID];
+
+            // Create question element
+            var questionElement = document.createElement('div');
+            questionElement.innerHTML = '<p>' + questionData.QuestionText + '</p>';
+
+            // Create answer elements
+            for (var i = 0; i < questionData.Answers.length; i++) {
+                var answer = questionData.Answers[i];
+                var answerElement = document.createElement('input');
+                answerElement.type = 'checkbox';
+                answerElement.name = 'answer_' + answer.AnswerID;
+                answerElement.value = answer.AnswerID;
+                answerElement.className = 'answersClass'
+                answerElement.id = 'answer_' + answer.AnswerID;
+
+                var labelElement = document.createElement('label');
+                labelElement.innerHTML = answer.AnswerText;
+                labelElement.setAttribute('for', 'answer_' + answer.AnswerID);
+
+                questionElement.appendChild(answerElement);
+                questionElement.appendChild(labelElement);
+                questionElement.appendChild(document.createElement('br'));
+            }
+
+            // Append question element to the container
+            questionContainer.innerHTML = questionElement.innerHTML;
         }
 
 

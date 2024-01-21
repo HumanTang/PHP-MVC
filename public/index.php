@@ -4,7 +4,7 @@ use Core\Session;
 use Core\ValidationException;
 
 const BASE_PATH = __DIR__.'/../';
-
+const DOC_ROOT = __DIR__;
 session_start();
 
 require BASE_PATH . 'vendor/autoload.php';

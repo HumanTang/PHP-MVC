@@ -39,6 +39,11 @@ function base_path($path)
     return BASE_PATH . $path;
 }
 
+function doc_root($path)
+{
+    return DOC_ROOT . $path;
+}
+
 function view($path, $attributes = [])
 {
     extract($attributes);

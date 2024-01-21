@@ -46,7 +46,7 @@ WHERE answers.QuestionID in (SELECT questions.QuestionID
         'quizid' => 1
     ]);
 
-
+    $questionID_arr = [];
     while ($row = $result->fetch_assoc()) {
         $questionID = $row['QuestionID'];
         $answer = array(
@@ -60,9 +60,11 @@ WHERE answers.QuestionID in (SELECT questions.QuestionID
                 'QuestionText' => $row['QuestionText'],
                 'Answers' => array()
             );
+            $questionID_arr[] = $questionID;
         }
 
         $quizData[$questionID]['Answers'][] = $answer;
+
     }
 
 
@@ -73,13 +75,19 @@ WHERE answers.QuestionID in (SELECT questions.QuestionID
     dd($e);
 }
 
+if($_POST["mode"] === "view"){
+    view("components/questions.view.php", [
+        'heading' => 'My Questions',
+        'questions' => $questions,
+        'quizData' => $quizData,
+    ]);
+}
 
+if($_POST["mode"] === "json"){
 
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(["quizData" =>$quizData, "quizQuestionID" => $questionID_arr]);
+}
 
-view("components/questions.view.php", [
-    'heading' => 'My Questions',
-    'questions' => $questions,
-    'quizData' => $quizData,
-]);
 
 
