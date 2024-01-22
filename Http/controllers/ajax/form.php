@@ -9,11 +9,11 @@ $questions = $_POST["questions"];
 //    "question_1": {
 //        "title": "test",
 //        "choice": {
-//        "answer_1": {
-//            "text": "1"
-//            },
+//            "answer_1": {
+//                "text": "1"
+//             },
 //            "answer_2": {
-//            "isCorrect": "1",
+//                "isCorrect": "1",
 //                "text": "2"
 //            }
 //        }

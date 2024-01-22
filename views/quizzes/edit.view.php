@@ -58,6 +58,28 @@
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="id" value="<?= $quiz['QuizID'] ?>">
                 </form>
+
+                <form id="myForm" action="<?= root_url("/response") ?>" method="post">
+                    <input type="hidden" name="QuizID" value="<?= $quiz['QuizID'] ?>">
+
+                    <div class="space-y-12">
+
+                        <div class="border-b border-gray-900/10 pb-12">
+                            <div class="mt-10 space-y-10">
+
+                                <div id="questions-container">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+                        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

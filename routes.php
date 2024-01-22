@@ -40,13 +40,13 @@ $router->get('/login', 'session/create.php')->only('guest');
 $router->post('/session', 'session/store.php')->only('guest');
 $router->delete('/session', 'session/destroy.php')->only('auth');
 //Ajax Call
-$router->post('/form', 'ajax/form.php');
-$router->post('/checkanswer', 'ajax/checkanswer.php');
-$router->post('/checkbox', 'ajax/components/checkbox.php');
-$router->post('/textarea', 'ajax/components/textarea.php');
-$router->post('/createQuestion', 'ajax/components/question_create.php');
-$router->post('/createAnswer', 'ajax/components/answer_create.php');
-$router->post('/getAnswers', 'ajax/functions/post/answers.php');
-$router->post('/getQuestions', 'ajax/functions/post/questions.php');
-$router->post('/getQuestionsJson', 'ajax/functions/post/questions.php');
-$router->post('/response', 'response.php');
+$router->post('/form', 'ajax/form.php'); // save quiz, questions, answers
+$router->post('/checkanswer', 'ajax/checkanswer.php'); // check answer for multiple questions
+$router->post('/checkbox', 'ajax/components/checkbox.php'); // load answers checkbox component
+$router->post('/textarea', 'ajax/components/textarea.php'); // load answers textarea component
+$router->post('/createQuestion', 'ajax/components/question_create.php'); // load create Question input
+$router->post('/createAnswer', 'ajax/components/answer_create.php'); // load create Answer input
+$router->post('/getAnswers', 'ajax/functions/post/answers.php'); // get answers by Question ID
+$router->post('/getQuestions', 'ajax/functions/post/questions.php'); // load Questions and Answers by Quiz ID
+$router->post('/getQuestionsJson', 'ajax/functions/post/questions.php'); // load Json Data Questions and Answers by Quiz ID
+$router->post('/response', 'response.php'); // answer check

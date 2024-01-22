@@ -1,0 +1,16 @@
+{
+    "QuizID": 1,
+    "question_1": {
+        "title": "test",
+        "questionID": 13,
+        "choice": {
+            "answer_1": {
+                "text": "1"
+             },
+            "answer_2": {
+                "isCorrect": "1",
+                "text": "2"
+            }
+        }
+    }
+}
