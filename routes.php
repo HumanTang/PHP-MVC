@@ -1,5 +1,6 @@
 <?php
-
+$router->get('/home/:method', 'HomeController');
+$router->get('/home/:method/:id', 'HomeController');
 $router->get('/', 'index.php');
 $router->get('/info', 'info.php');
 $router->get('/about', 'about.php');
@@ -7,9 +8,11 @@ $router->get('/contact', 'contact.php');
 
 $router->get('/quizzes', 'quizzes/index.php')->only('auth');
 $router->get('/quiz', 'quizzes/show.php');
+
 $router->delete('/quiz', 'quizzes/destroy.php');
 
 $router->get('/quiz/edit', 'quizzes/edit.php');
+$router->get('/quiz/start', 'quizzes/start.php');
 $router->patch('/quiz', 'quizzes/update.php');
 
 $router->get('/quizzes/create', 'quizzes/create.php');
@@ -50,3 +53,5 @@ $router->post('/getAnswers', 'ajax/functions/post/answers.php'); // get answers 
 $router->post('/getQuestions', 'ajax/functions/post/questions.php'); // load Questions and Answers by Quiz ID
 $router->post('/getQuestionsJson', 'ajax/functions/post/questions.php'); // load Json Data Questions and Answers by Quiz ID
 $router->post('/response', 'response.php'); // answer check
+
+$router->post('/getQuestionsJson', 'api/QuizController.php'); // load Json Data Questions and Answers by Quiz ID

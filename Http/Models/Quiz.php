@@ -3,15 +3,25 @@
 namespace Http\Models;
 use Core\App;
 use Core\Database;
+use PDOException;
 
 class Quiz
 {
-    public function test(): void
+    public function getQuiz($id = 1)
     {
-        echo "hello";
+        $result = null;
+        try {
+            $db = App::resolve(Database::class);
+            $result = $db->query('select * from quizzes where QuizID = :id', [
+                'id' => $id
+            ])->findOrFail();
+        }catch (PDOException $e) {
+            dd($e);
+        }
+        return $result;
     }
 
-    public function checkAnswer($quizAnswers, $quizid){
+    public function checkAllAnswers($quizAnswers, $quizid){
         // Fetch correct answers from the database
         $correctAnswers = array();
         $questions = null;
@@ -19,14 +29,14 @@ class Quiz
         try {
             $db = App::resolve(Database::class);
             $db->beginTransaction();
-        foreach ($quizAnswers['questions'] as $questionID => $userAnswer) {
-            $answers = $db->query('SELECT AnswerID FROM Answers WHERE QuestionID = :questionID AND IsCorrect = 1',
-                ['questionID' => $questionID]
-            );
+            foreach ($quizAnswers['questions'] as $questionID => $userAnswer) {
+                $answers = $db->query('SELECT AnswerID FROM Answers WHERE QuestionID = :questionID AND IsCorrect = 1',
+                    ['questionID' => $questionID]
+                )->fetchAll();
 
 
-            $correctAnswers[$questionID] = $answers->fetchAll();
-        }
+                $correctAnswers[$questionID] = $answers;
+            }
             $db->commit();
         }catch (PDOException $e) {
             // Roll back the transaction if any step fails
@@ -44,51 +54,83 @@ class Quiz
 
     }
 
-    public function getCorrectAnswer($questionid){
-        //"SELECT AnswerID FROM Answers WHERE QuestionID = :questionID AND IsCorrect = 1"
-        $questions = null;
-        try {
+    function getCorrectAnswerIDs($questionId){
+        $result = null;
+        try{
             $db = App::resolve(Database::class);
-            $db->beginTransaction();
+            $result = $db->query('SELECT
+                                    q.QuestionID,
+                                    q.QuestionText,
+                                    GROUP_CONCAT(a.AnswerID ORDER BY a.AnswerID) AS AllAnswerIDs,
+                                    GROUP_CONCAT(a.IsCorrect ORDER BY a.AnswerID) AS AllIsCorrect
+                                FROM
+                                    Questions q
+                                JOIN
+                                    Answers a ON q.QuestionID = a.QuestionID
+                                GROUP BY
+                                    q.QuestionID, q.QuestionText;
+                                  
+                                    ',['questionId' => $questionId])->get();
 
-            $questions = $db->query('SELECT AnswerID FROM Answers WHERE QuestionID = :questionID AND IsCorrect = 1', [
-                'questionID' => $questionid
-            ])->get();
-
-            $db->commit();
         }catch (PDOException $e) {
-            // Roll back the transaction if any step fails
-            $db->rollBack();
             dd($e);
         }
+        return $result;
 
-        return $questions;
     }
-    public function get()
-    {
-        $questions = null;
+
+    public function getCorrectAnswer($questionId){
+        $result = null;
         try {
             $db = App::resolve(Database::class);
-            $db->beginTransaction();
 
-            $questions = $db->query('SELECT questions.QuestionID, questions.QuestionText, AnswerID, AnswerText, IsCorrect
-                                    FROM Questions
-                                             Join answers on answers.QuestionID = questions.QuestionID
-                                    WHERE answers.QuestionID in (SELECT questions.QuestionID
-                                                                 FROM Questions
-                                                                 Join quizquestions on questions.QuestionID = quizquestions.QuestionID
-                                                                 WHERE quizquestions.QuizID = :quizid)', [
-                'quizid' => 1
+            $result = $db->query('SELECT * FROM Answers WHERE QuestionID = :questionID AND IsCorrect = 1', [
+                'questionID' => $questionId
             ])->get();
 
-            $db->commit();
+
         }catch (PDOException $e) {
-            // Roll back the transaction if any step fails
-            $db->rollBack();
             dd($e);
         }
 
-        return $questions;
+        return $result;
+    }
+    public function getQuizInfoById($id)
+    {
+        $result = null;
+        try {
+            $db = App::resolve(Database::class);
+            $result = $db->query('select * from quizzes where QuizID = :id', [
+                'id' => $id
+            ])->findOrFail();
+        }catch (PDOException $e) {
+            dd($e);
+        }
+        return $result;
+    }
+
+    function getCorrectAnswerID($questionId){
+        $result = null;
+        try{
+            $db = App::resolve(Database::class);
+            $result = $db->query('SELECT
+                                    q.QuestionID,
+                                    q.QuestionText,
+                                    GROUP_CONCAT(a.AnswerID ORDER BY a.AnswerID) AS AllAnswerIDs
+                                FROM
+                                    Questions q
+                                JOIN
+                                    Answers a ON q.QuestionID = a.QuestionID
+                                WHERE q.QuestionID = :questionId
+                                GROUP BY
+                                    q.QuestionID, q.QuestionText                                    
+                                    ',['questionId' => $questionId])->get();
+
+        }catch (PDOException $e) {
+            dd($e);
+        }
+        return $result;
+
     }
 
 }
