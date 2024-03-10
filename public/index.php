@@ -44,7 +44,7 @@ function handleUri($uri, $method, $router)
         }
         // Modify the route based on the extracted controller, action, and id
         $response = $router->new_route($routing_url, $method);
-        require $response->path;
+        //require $response->path;
     } else {
         // Fallback to the logic from index_old.php
         $response = $router->route($uri, $method);

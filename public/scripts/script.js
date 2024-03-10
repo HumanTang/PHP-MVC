@@ -43,7 +43,7 @@ window.addEventListener('load', function () {
         form.addEventListener( 'submit' ,function(event) {
             event.preventDefault();
             console.log("submitted");
-            // submitQuiz();
+            submitQuiz();
         });
 
         document.querySelector('#toggleCollapseBtn').addEventListener('click', function () {
@@ -61,7 +61,9 @@ window.addEventListener('load', function () {
 
         });
     document.querySelector('#nextQuestionBtn').addEventListener('click', function () {
+            console.log("next Question Button");
             var quizQuestionID = JSON.parse(localStorage.getItem('quizQuestionID'));
+            console.log("quizQuestionID",quizQuestionID);
             var currentQuestionIndex = parseInt(localStorage.getItem('currentQuestionIndex'));
             currentQuestionIndex = currentQuestionIndex + 1;
             localStorage.setItem('currentQuestionIndex', currentQuestionIndex);
@@ -112,7 +114,7 @@ window.addEventListener('load', function () {
 
 
         function submitAnswer() {
-            const formData = document.querySelector('#myForm').serializeArray();
+            const formData = document.querySelector('#debugForm').serializeArray();
             console.log('FormData:', formData);
             $.ajax({
                 url: 'http://127.0.0.1:8080/checkanswer',
@@ -133,10 +135,14 @@ window.addEventListener('load', function () {
 
 
 
-
     document.querySelector('#addQuestionBtn').addEventListener('click', function () {
             // AJAX request to form.php
-            var index = document.querySelector(".questions-cards").length + 1;
+            var questions = document.querySelector(".questions-cards");
+            var index = 0;
+            if(questions !== null){
+                index = document.querySelector(".questions-cards").length + 1;
+            }
+
             $.ajax({
                 url: 'http://127.0.0.1:8080/textarea',
                 type: 'POST',
@@ -144,7 +150,14 @@ window.addEventListener('load', function () {
                 dataType: 'html',
                 success: function (response) {
                     // Append the received HTML to the form
-                    document.querySelector('#newQuestion-container').appendChild(response);
+                    var newDivElement = document.createElement("div");
+                    newDivElement.setAttribute("id", "newQuestion-container");
+                    var newFormElement = document.createElement("form");
+                    newFormElement.setAttribute("id", "newQuestionForm");
+                    newDivElement.appendChild(newFormElement);
+
+                    document.querySelector('#content').appendChild(newDivElement);
+                    document.getElementById("newQuestion-container").innerHTML += response;
                 },
                 error: function () {
                     console.log('Error in AJAX request');
@@ -153,17 +166,17 @@ window.addEventListener('load', function () {
         });
 
         function submitQuiz() {
-            const formData = document.querySelector('#myForm').serializeArray();
+            const formData = $('#myForm').serializeArray();
             console.log('FormData:', formData);
             $.ajax({
-                url: 'http://127.0.0.1:8080/form',
+                url: 'http://127.0.0.1:8080/quiz/form',
                 type: 'post',
                 data: formData,
                 // dataType: 'json',
                 success: function(response) {
                     // Save user answers to cookies
                     console.log('response', response)
-                    document.querySelector('#dynamicElementsContainer').appendChild(response);
+                    document.getElementById('dynamicElementsContainer').innerHTML = response;
                 },
                 error: function(xhr, status, error) {
                     console.error('Error submitting quiz:', status, error);
@@ -246,20 +259,22 @@ window.addEventListener('load', function () {
         }
 
 
-        function getAnswers() {
+        document.getElementById('getAnswerBtn').addEventListener('click', function (){
+            var questionid = document.getElementById('questionIdSelect').selected
             $.ajax({
                 url: 'http://127.0.0.1:8080/getAnswers',
                 type: 'post',
+                data: {id: questionid},
                 // dataType: 'json',
                 success: function(response) {
                     console.log('response', response)
-                    document.querySelector('#answers-container').appendChild(response);
+                    document.querySelector('#answers-container').innerHTML = response;
                 },
                 error: function(xhr, status, error) {
                     console.error('Error getAnswers:', status, error);
                 }
             });
-        }
+        });
 
 
 

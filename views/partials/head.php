@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/pretty-print-json@2.1/dist/css/pretty-print-json.css>
-
+    <link rel=stylesheet href=<?php echo root_url("/css/styles.css")?>>
 </head>
 
 <body class="h-full">

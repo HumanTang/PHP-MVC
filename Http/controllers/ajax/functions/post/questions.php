@@ -5,6 +5,9 @@ use Core\Database;
 
 try {
 
+    if(isset($_POST['id'])){
+        $id =  $_POST['id'];
+    }
 
     $db = App::resolve(Database::class);
     $db->beginTransaction();
@@ -22,7 +25,7 @@ WHERE answers.QuestionID in (SELECT questions.QuestionID
                              FROM Questions
                                       Join quizquestions on questions.QuestionID = quizquestions.QuestionID
                              WHERE quizquestions.QuizID = :quizid)', [
-        'quizid' => 1
+        'quizid' => $id
     ])->get();
 
 

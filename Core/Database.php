@@ -47,6 +47,11 @@ class Database
         return $this->statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function fetchAll_num()
+    {
+        return $this->statement->fetchAll(PDO::FETCH_NUM);
+    }
+
     public function findOrFail()
     {
         $result = $this->find();

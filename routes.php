@@ -1,4 +1,10 @@
 <?php
+$router->get('/quiz/:method', 'QuizController');
+$router->get('/quiz/:method/:id', 'QuizController');
+
+$router->post('/quiz/:method', 'QuizController');
+$router->post('/quiz/:method/:id', 'QuizController');
+
 $router->get('/home/:method', 'HomeController');
 $router->get('/home/:method/:id', 'HomeController');
 $router->get('/', 'index.php');
@@ -8,10 +14,12 @@ $router->get('/contact', 'contact.php');
 
 $router->get('/quizzes', 'quizzes/index.php')->only('auth');
 $router->get('/quiz', 'quizzes/show.php');
+$router->post('/quiz', 'quizzes/show.php');
 
 $router->delete('/quiz', 'quizzes/destroy.php');
 
-$router->get('/quiz/edit', 'quizzes/edit.php');
+//$router->get('/quiz/edit', 'quizzes/edit.php');
+
 $router->get('/quiz/start', 'quizzes/start.php');
 $router->patch('/quiz', 'quizzes/update.php');
 
