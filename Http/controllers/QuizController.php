@@ -65,6 +65,43 @@ class QuizController
         echo json_encode($quiz);
     }
 
+    public function import(){
+        $quizObj = new Models\Quiz();
+        $result["heading"] = "Quiz";
+        view("quizzes/import.view.php", $result);
+    }
+
+    public function importJson(){
+        $filename = "";
+        if(isset($_GET["filename"])){
+            $filename = $_GET["filename"];
+        }
+
+        $uploadHandler = new Models\UploadHandler();
+        $jsondata = $uploadHandler->getJson($filename . ".json");
+        $importresult = $uploadHandler->importJson($jsondata["questions"]);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($importresult);
+    }
+
+    public function upload(){
+        $uploadHandler = new Models\UploadHandler();
+        $uploadresult = $uploadHandler->upload();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($uploadresult);
+    }
+
+    public function getjson(){
+        $filename = "";
+        if(isset($_GET["filename"])){
+            $filename = $_GET["filename"];
+        }
+        $uploadHandler = new Models\UploadHandler();
+        $jsondata = $uploadHandler->getJson($filename . ".json");
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($jsondata);
+    }
+
     public function checkBox(){
         $quizObj = new Models\Quiz();
         echo $quiz = $quizObj->getCheckBox();

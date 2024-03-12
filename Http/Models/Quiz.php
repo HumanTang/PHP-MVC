@@ -21,6 +21,70 @@ class Quiz
         return $result;
     }
 
+    public function createQuestion($questionText, $quizId){
+        $db = App::resolve(Database::class);
+        $result = array(
+            "success" => false,
+            "message" => ""
+        );
+        try {
+            // Create a PDO instance
+
+            // Start a transaction
+            $db->beginTransaction();
+
+            // Step 1: Insert the question into the Questions table
+            $db->query('INSERT INTO Questions(QuestionText) VALUES(:question)', [
+                'question' => $questionText
+            ]);
+
+            // Step 2: Insert the association with QuizID = 1 into the QuizQuestions table
+            $questionID = $db->lastInsertId();
+
+            $db->query("INSERT INTO QuizQuestions (QuizID, QuestionID) VALUES (:quizID, :questionID)", [
+                'quizID' => $quizId,
+                'questionID' => $questionID
+            ]);
+            // Commit the transaction if both steps succeed
+            $db->commit();
+            $result["success"] = true;
+            $result["message"] = "question inserted successfully";
+        } catch (PDOException $e) {
+            // Roll back the transaction if any step fails
+            $db->rollBack();
+            $result["success"] = false;
+            $result["message"] = $e->getMessage();
+        }
+        return $result;
+    }
+
+    public function createAnswer($answerText,$questionId,$isCorrect){
+        $result = array(
+            "success" => false,
+            "message" => ""
+        );
+        $db = App::resolve(Database::class);
+        try {
+            // Create a PDO instance
+
+            // Start a transaction
+            $db->beginTransaction();
+            $db->query('INSERT INTO Answers(AnswerText, QuestionID, IsCorrect) VALUES(:answer, :questionid, :IsCorrect)', [
+                'answer' => $answerText,
+                'IsCorrect' => $isCorrect,
+                'questionid' => $questionId
+            ]);
+            $db->commit();
+            $result["message"] = "answer inserted successfully";
+        } catch (PDOException $e) {
+            // Roll back the transaction if any step fails
+            $db->rollBack();
+            $result["success"] = false;
+            $result["message"] = $e->getMessage();
+        }
+        return $result;
+    }
+
     public function show($id){
         $db = App::resolve(Database::class);
 
