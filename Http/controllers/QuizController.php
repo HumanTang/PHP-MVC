@@ -84,6 +84,19 @@ class QuizController
         echo json_encode($importresult);
     }
 
+    public function importMDJson(){
+        $filename = "";
+        if(isset($_GET["filename"])){
+            $filename = $_GET["filename"];
+        }
+
+        $uploadHandler = new Models\UploadHandler();
+        $jsondata = $uploadHandler->getJson($filename . ".json");
+        $importresult = $uploadHandler->importMDJson($jsondata, $jsondata["QuizId"]);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($importresult);
+    }
+
     public function upload(){
         $uploadHandler = new Models\UploadHandler();
         $uploadresult = $uploadHandler->upload();

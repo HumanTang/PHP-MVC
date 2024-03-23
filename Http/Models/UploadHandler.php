@@ -45,15 +45,39 @@ class UploadHandler {
     }
 
     function importJson($json){
-        $quizObj = new Quiz();
+        $quizObj = new Quiz();        
         foreach ($json as $key => $value){
             $quizObj->createQuestion($value["questionText"], $value["quizID"]);
             foreach ($value["answers"] as $ans_key => $answer_value){
                 $quizObj->createAnswer($answer_value["answerText"],$answer_value["questionID"],$answer_value["isCorrect"]);
             }
         }
-
     }
+
+    function importMDJson($json, $quizId){
+        $quizObj = new Quiz();
+        for($i = 1; $i <= 65; $i++){
+            $res = $quizObj->createQuestion($json["Question".$i]["Problem"], $quizId);
+            $answers = $json["Question".$i]["Answers"];
+            for($n = 0; $n < count($answers); $n++){
+                if(is_array($answers[$n])){
+                    continue;
+                }
+                if($n + 1 < count($answers)){
+                    if(is_array($answers[$n + 1]) == 1){
+                        $quizObj->createAnswer($answers[$n], $res["questionId"], True);    
+                    }else{                       
+                        $quizObj->createAnswer($answers[$n], $res["questionId"], False);
+                    }
+                }
+
+                if($n == count($answers) - 1){                    
+                    $quizObj->createAnswer($answers[$n], $res["questionId"], False);
+                }
+            }
+        }
+    }
+
 
     function getJson($filename){
         $json = file_get_contents(Utility::doc_root("/upload/") . $filename);

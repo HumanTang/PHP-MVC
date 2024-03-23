@@ -49,6 +49,7 @@ class Quiz
             $db->commit();
             $result["success"] = true;
             $result["message"] = "question inserted successfully";
+            $result["questionId"] = $questionID;
         } catch (PDOException $e) {
             // Roll back the transaction if any step fails
             $db->rollBack();
